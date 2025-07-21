@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>403 Forbidden - Email System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: #4285f4;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+        }
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .sidebar {
+            width: 200px;
+            background: white;
+            height: calc(100vh - 60px);
+            padding: 20px;
+            float: left;
+        }
+        .main-content {
+            margin-left: 200px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .nav-link {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .nav-link:hover {
+            background: #f1f1f1;
+        }
+        .nav-link.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+        .error-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc3545;
+            margin-top: 20px;
+        }
+        .error-details {
+            margin-top: 10px;
+            color: #666;
+            font-size: 18px;
+        }
+        .home-link {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4285f4;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .home-link:hover {
+            background: #357ae8;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="error-message">403 - Forbidden</div>
+        <div class="error-details">
+            You do not have permission to access this page.
+        </div>
+        <a href="/" class="home-link">Go to Homepage</a>
+    </div>
+</body>
+</html>

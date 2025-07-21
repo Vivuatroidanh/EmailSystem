@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox - Email System</title>
+    <style>
+        body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f7fa;
+        }
+
+        .pageHeader {
+        background-color: #055ff2;
+        color: #fff;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        }
+
+        .pageHeader .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        }
+
+        .pageHeader .logo img {
+        height: 40px;
+        margin-right: 1rem;
+        }
+
+        .pageHeader .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        }
+
+        .sign-out-button {
+        padding: 0.5rem 1rem;
+        background-color: #f44336;
+        color: #fff;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s;
+        }
+
+        .sign-out-button:hover {
+        background-color: #c62828;
+        }
+
+        .sidebar_nav {
+        width: 250px;
+        background-color: #fff;
+        height: calc(100vh - 60px);
+        padding: 2rem;
+        float: left;
+        overflow-y: auto;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: #333;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+        transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-link:hover {
+        background-color: #f5f5f5;
+        }
+
+        .nav-link.active {
+        background-color: #e8f0fe;
+        color: #4285f4;
+        font-weight: bold;
+        }
+
+        .main-content {
+        margin-left: 250px;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        }
+
+        .email-list {
+        list-style: none;
+        padding: 0;
+        margin: 2rem 0;
+        }
+
+        .email-item {
+        display: flex;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #eee;
+        align-items: center;
+        justify-content: space-between;
+        transition: background-color 0.3s;
+        }
+
+        .email-item:hover {
+        background-color: #f5f5f5;
+        }
+
+        .checkbox {
+        margin-right: 1.5rem;
+        }
+
+        .email-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        }
+
+        .sender {
+        font-weight: bold;
+        width: 20%;
+        }
+
+        .subject {
+        color: #333;
+        width: 60%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100ch;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s;
+        margin-left: 1rem; 
+        }
+
+        .subject:hover {
+        color: #4285f4;
+        }
+
+        .time {
+        color: #666;
+        font-size: 0.9em;
+        text-align: right;
+        width: 20%;
+        }
+
+        .pagination {
+        margin-top: 2rem;
+        text-align: center;
+        }
+
+        .pagination a {
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .pagination a.active {
+        background-color: #4285f4;
+        color: #fff;
+        border-color: #4285f4;
+        }
+
+        .pagination a.disabled {
+        color: #aaa;
+        pointer-events: none;
+        }
+
+        #delete {
+        padding: 0.75rem 1.5rem;
+        background-color: #f44336;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 2rem;
+        transition: background-color 0.3s;
+        }
+
+        #delete:hover {
+        background-color: #c62828;
+        }
+
+        #select-all {
+        margin-left: 0;
+        margin-bottom: 1rem;
+        }
+
+        .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        }
+
+        .email-header {
+        display: flex;
+        padding: 1rem 1.5rem;
+        background-color: #f0f0f0;
+        font-weight: bold;
+        color: #555;
+        border-bottom: 1px solid #ddd;
+        }
+
+        .checkbox-placeholder {
+        width: 5%;
+        margin-right: 1.5rem;
+        }
+
+        .email-header div {
+        width: 20%;
+        text-align: left;
+        }
+
+        .email-header .subject-header {
+        width: 60%;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageHeader">
+        <div class="logo"><img src="https://cdn-icons-png.flaticon.com/512/8743/8743964.png" alt="Logo" style="width: 30px;"> Email System</div>
+        <div class="user-info">
+            <span style="font-size: 20px; font-family: Arial, sans-serif;"> Welcome <%= user.fullName %></span>
+            <a href="/signout" class="sign-out-button">Sign Out</a>
+        </div>
+    </div>
+
+    <div class="sidebar_nav">
+        <a href="/compose" class="nav-link"><img src="https://listimg.pinclipart.com/picdir/s/116-1168371_the-icon-is-a-picture-of-a-logo.png" style="width:15px;"> Compose</a>
+        <a href="/inbox" class="nav-link active"><img src="https://cdn-icons-png.flaticon.com/512/104/104703.png" style="width:15px;"> Inbox</a>
+        <a href="/outbox" class="nav-link"><img src="https://cdn-icons-png.flaticon.com/512/104/104704.png" style="width: 15px;"> Outbox</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Inbox Page</h1>
+
+        <% if (emails.length === 0) { %>
+            <p>No emails.</p>
+        <% } else { %>
+            <div class="actions">
+                <div>
+                    <input type="checkbox" id="select-all" onclick="selectAll(this)">
+                    <label for="select-all">Select All</label>
+                    <button id="delete" onclick="deleteSelected()">Delete Selected</button>
+                </div>
+            </div>
+
+            <div class="email-header">
+                <div>Sender</div>
+                <div class="subject-header">Subject</div>
+                <div>Received Time</div>
+            </div>
+
+            <form id="deleteForm">
+                <ul class="email-list">
+                    <% emails.forEach(email => { %>
+                        <li class="email-item">
+                            <input type="checkbox" name="emailIds" value="<%= email.id %>" class="checkbox" onclick="event.stopPropagation();">
+                            <div class="email-content">
+                                <div class="sender"><%= email.senderName %></div>
+                                <div class="subject" onclick="window.location.href='/email/<%= email.id %>'"><%= email.subject || '(no subject)' %></div>
+                                <div class="time"><%= new Date(email.createdAt).toLocaleString() %></div>
+                            </div>
+                        </li>
+                    <% }); %>
+                </ul>
+            </form>
+
+            <div class="pagination">
+                <!-- Nút Trang Trước -->
+                <a href="/inbox?page=<%= Math.max(1, currentPage - 1) %>" class="<%= currentPage === 1 ? 'disabled' : '' %>"><<</a>
+                
+                <!-- Các Số Trang -->
+                <% for(let i = 1; i <= totalPages; i++) { %>
+                    <a href="/inbox?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                <% } %>
+                
+                <!-- Nút Trang Sau -->
+                <a href="/inbox?page=<%= Math.min(totalPages, currentPage + 1) %>" class="<%= currentPage === totalPages ? 'disabled' : '' %>">>></a>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        function selectAll(source) {
+            const checkboxes = document.querySelectorAll('input[name="emailIds"]');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+        }
+    
+        async function deleteSelected() {
+            const checkboxes = document.querySelectorAll('input[name="emailIds"]:checked');
+            const emailIds = Array.from(checkboxes).map(cb => cb.value);
+    
+            if (emailIds.length === 0) return;
+    
+            try {
+                if (confirm('Are you sure you want to delete the selected emails?')) {
+                    const response = await fetch('/api/emails/delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ emailIds })
+                    });
+    
+                    if (response.ok) {
+                        emailIds.forEach(id => {
+                            const emailItem = document.querySelector(`input[value="${id}"]`).closest('.email-item');
+                            emailItem.remove();
+                        });
+                        alert('Emails deleted successfully!');
+                    } else {
+                        alert('An error occurred while deleting the emails.');
+                    }
+                }
+            } catch (error) {
+                console.error('Error deleting emails:', error);
+                alert('An error occurred while deleting the emails.');
+            }
+        }
+    </script>
+</body>
+</html>

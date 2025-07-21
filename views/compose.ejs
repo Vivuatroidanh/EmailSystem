@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compose - Email System</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+
+        .header {
+            background-color: #055ff2;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+        }
+        .header .logo img {
+            height: 40px;
+            margin-right: 1rem;
+        }
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .sign-out-button {
+            padding: 0.5rem 1rem;
+            background-color: #f44336;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .sign-out-button:hover {
+            background-color: #c62828;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            height: calc(100vh - 60px);
+            padding: 2rem;
+            float: left;
+            overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #f5f5f5;
+        }
+        .nav-link.active {
+            background-color: #e8f0fe;
+            color: #4285f4;
+            font-weight: bold;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input[type="text"], textarea, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .error, .success {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+        }
+        .error {
+            background-color: #dc3545;
+        }
+        .success {
+            background-color: #28a745;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #714d42;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="https://cdn-icons-png.flaticon.com/512/8743/8743964.png" alt="Logo" style="width: 30px;"> Email System</div>
+        <div class="user-info">
+            <span style="font-size: 20px;">Welcome <%= user.fullName %></span>
+            <a href="/signout" class="sign-out-button">Sign Out</a>
+        </div>
+    </div>
+    
+    <div class="sidebar">
+        <a href="/compose" class="nav-link active"><img src="https://listimg.pinclipart.com/picdir/s/116-1168371_the-icon-is-a-picture-of-a-logo.png" style="width:15px;"> Compose</a>
+        <a href="/inbox" class="nav-link"><img src="https://cdn-icons-png.flaticon.com/512/104/104703.png" style="width:15px;"> Inbox</a>
+        <a href="/outbox" class="nav-link"><img src="https://cdn-icons-png.flaticon.com/512/104/104704.png" style="width: 15px;"> Outbox</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Compose Email</h1>
+
+        <% if (locals.error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        <% if (locals.success) { %>
+            <div class="success"><%= success %></div>
+        <% } %>
+
+        <form action="/compose" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="recipient">To:</label>
+                <select id="recipient" name="recipient" required>
+                    <option value="">Select recipient</option>
+                    <% users.forEach(user => { %>
+                        <option value="<%= user.id %>"><%= user.fullName %> (<%= user.email %>)</option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" placeholder="Enter subject">
+            </div>
+            <div class="form-group">
+                <label for="body">Message:</label>
+                <textarea id="body" name="body" rows="10" placeholder="Enter your message..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="attachment">Attachment:</label>
+                <input type="file" id="attachment" name="attachment">
+            </div>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</body>
+</html>

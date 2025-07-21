@@ -1,0 +1,21 @@
+# Thư mục chứa thư viện đã cài (sẽ được tạo lại bằng npm install)
+node_modules/
+
+# File lock (có thể bỏ qua khi cần nhẹ repo)
+package-lock.json
+
+# File log hệ thống
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Thư mục chứa file tải lên nếu không cần commit
+uploads/
+
+# Môi trường ảo (nếu dùng tools khác)
+.env
+.DS_Store
+
+# Các file của hệ điều hành/macOS
+Thumbs.db
+*.log

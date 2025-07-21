@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Detail - Email System</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+
+        .pageHeader {
+            background-color: #055ff2;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .pageHeader .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+        }
+
+        .pageHeader .logo img {
+            height: 40px;
+            margin-right: 1rem;
+        }
+
+        .pageHeader .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .sign-out-button {
+            padding: 0.5rem 1rem;
+            background-color: #f44336;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .sign-out-button:hover {
+            background-color: #c62828;
+        }
+
+        .sidebar_nav {
+            width: 250px;
+            background-color: #fff;
+            height: calc(100vh - 60px);
+            padding: 2rem;
+            float: left;
+            overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: #f5f5f5;
+        }
+
+        .nav-link.active {
+            background-color: #e8f0fe;
+            color: #4285f4;
+            font-weight: bold;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .email-meta, .email-body, .back-btn {
+            margin-top: 2rem;
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #357ae8;
+        }
+
+        .email-body pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            padding: 1rem;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageHeader">
+        <div class="logo"><img src="https://cdn-icons-png.flaticon.com/512/8743/8743964.png" alt="Logo" style="width: 30px;"> Email System</div>
+        <div class="user-info">
+            <span style="font-size: 20px; font-family: Arial, sans-serif;">Welcome <%= user.fullname %></span>
+            <a href="/signout" class="sign-out-button">Sign Out</a>
+        </div>
+    </div>
+
+    <div class="sidebar_nav">
+        <a href="/compose" class="nav-link">Compose</a>
+        <a href="/inbox" class="nav-link active">Inbox</a>
+        <a href="/outbox" class="nav-link">Outbox</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Email Detail</h1>
+
+        <div class="email-detail">
+            <div class="email-meta">
+                <% if (email.senderId !== user.id) { %>
+                    <p><strong>From:</strong> <%= email.senderName %> (<%= email.senderEmail %>)</p>
+                <% } %>
+                <p><strong>To:</strong> <%= email.recipientName %> (<%= email.recipientEmail %>)</p>
+                <p><strong>Subject:</strong> <%= email.subject || '(no subject)' %></p>
+                <p><strong>Date:</strong> <%= new Date(email.createdAt).toLocaleString() %></p>
+            </div>
+
+            <% if (email.attachment) { %>
+                <div class="attachment">
+                    <p><strong>Attachment:</strong> <a href="/download/<%= email.id %>"><%= email.attachmentName %></a></p>
+                </div>
+            <% } %>
+
+            <div class="email-body">
+                <pre><%= email.body %></pre>
+            </div>
+
+            <a href="/inbox" class="back-btn">Back to Inbox</a>
+        </div>
+    </div>
+</body>
+</html>
