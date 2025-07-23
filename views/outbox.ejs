@@ -3,334 +3,784 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outbox - Email System</title>
+    <title>Sent - Enhanced Email System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f5f7fa;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         .header {
-            background-color: #055ff2;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 60px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .header .logo {
+        .logo {
+            display: flex;
+            align-items: center;
             font-size: 1.5rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
+            font-weight: 700;
+            color: #4a5568;
         }
 
-        .header .logo img {
+        .logo i {
+            margin-right: 0.5rem;
+            color: #667eea;
+            font-size: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
             height: 40px;
-            margin-right: 1rem;
-        }
-
-        .header .user-info {
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
-            gap: 1.5rem;
-        }
-
-        .sign-out-button {
-            padding: 0.5rem 1rem;
-            background-color: #f44336;
-            color: #fff;
-            border-radius: 4px;
-            text-decoration: none;
+            justify-content: center;
+            color: white;
             font-weight: bold;
-            transition: background-color 0.3s;
         }
 
-        .sign-out-button:hover {
-            background-color: #c62828;
+        .sign-out-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .sign-out-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
         }
 
         .sidebar {
-            width: 250px;
-            background-color: #fff;
-            height: calc(100vh - 60px);
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 2rem;
-            float: left;
-            overflow-y: auto;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
         }
 
-        .nav-link {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: #333;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            transition: background-color 0.3s, color 0.3s;
+        .nav-section {
+            margin-bottom: 2rem;
         }
 
-        .nav-link:hover {
-            background-color: #f5f5f5;
-        }
-
-        .nav-link.active {
-            background-color: #e8f0fe;
-            color: #4285f4;
-            font-weight: bold;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            height: calc(100vh - 60px);
-            overflow-y: auto;
-        }
-
-        .email-list {
-            list-style: none;
-            padding: 0;
-            margin: 2rem 0;
-        }
-
-        .email-item {
-            display: flex;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #eee;
-            align-items: center;
-            justify-content: space-between;
-            transition: background-color 0.3s;
-        }
-
-        .email-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .checkbox {
-            margin-right: 1.5rem;
-        }
-
-        .email-content {
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-
-        .recipient {
-            font-weight: bold;
-            width: 20%;
-        }
-
-        .subject {
-            color: #333;
-            width: 60%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100ch;
-            cursor: pointer;
-            text-decoration: none;
-            transition: color 0.3s;
-            margin-left: 1rem; 
-        }
-
-        .subject:hover {
-            color: #4285f4;
-        }
-
-        .time {
-            color: #666;
-            font-size: 0.9em;
-            text-align: right;
-            width: 20%;
-        }
-
-        .pagination {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .pagination a {
-            padding: 0.5rem 1rem;
-            margin: 0 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #333;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-        }
-
-        .pagination a.active {
-            background-color: #4285f4;
-            color: #fff;
-            border-color: #4285f4;
-        }
-
-        .pagination a.disabled {
-            color: #aaa;
-            pointer-events: none;
-        }
-
-        #delete-btn {
-            padding: 0.75rem 1.5rem;
-            background-color: #f44336;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 2rem;
-            transition: background-color 0.3s;
-        }
-
-        #delete-btn:hover {
-            background-color: #c62828;
-        }
-
-        #select-all {
-            margin-left: 0;
+        .nav-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 1rem;
         }
 
-        .actions {
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #4a5568;
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 1rem;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .content-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
 
-        .email-header {
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
             display: flex;
+            align-items: center;
+        }
+
+        .page-title i {
+            margin-right: 0.5rem;
+            color: #667eea;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .sort-dropdown {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sort-dropdown:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .email-list {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .email-header {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
             padding: 1rem 1.5rem;
-            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .email-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f7fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .email-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            transform: translateX(5px);
+        }
+
+        .checkbox {
+            margin-right: 1rem;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .recipient-info {
+            display: flex;
+            align-items: center;
+            width: 250px;
+            margin-right: 1rem;
+        }
+
+        .recipient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: bold;
-            color: #555;
-            border-bottom: 1px solid #ddd;
+            margin-right: 0.75rem;
+            font-size: 0.875rem;
         }
 
-        .checkbox-placeholder {
-            width: 5%;
-            margin-right: 1.5rem;
+        .recipient-details {
+            overflow: hidden;
         }
 
-        .email-header div {
-            width: 20%;
-            text-align: left;
+        .recipient-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.875rem;
         }
 
-        .email-header .subject-header {
-            width: 60%;
+        .recipient-label {
+            font-size: 0.75rem;
+            color: #718096;
+        }
+
+        .email-content {
+            flex: 1;
+            margin-right: 1rem;
+            overflow: hidden;
+        }
+
+        .email-subject {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .email-preview {
+            font-size: 0.875rem;
+            color: #718096;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .email-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+            min-width: 120px;
+        }
+
+        .email-time {
+            font-size: 0.75rem;
+            color: #718096;
+        }
+
+        .email-badges {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-priority-high {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .badge-priority-normal {
+            background: #e6fffa;
+            color: #0d9488;
+        }
+
+        .badge-priority-low {
+            background: #f0fff4;
+            color: #22543d;
+        }
+
+        .badge-attachment {
+            background: #e6f3ff;
+            color: #1e40af;
+        }
+
+        .badge-sent {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .priority-icon {
+            font-size: 0.75rem;
+        }
+
+        .priority-high { color: #e53e3e; }
+        .priority-normal { color: #38a169; }
+        .priority-low { color: #718096; }
+
+        .pagination {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination a {
+            padding: 0.5rem 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .pagination a:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-1px);
+        }
+
+        .pagination a.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pagination a.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #718096;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #cbd5e0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 1rem;
+            }
+            
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: none;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo"><img src="https://cdn-icons-png.flaticon.com/512/8743/8743964.png" alt="Logo" style="width: 30px;"> Email System</div>
+        <div class="logo">
+            <i class="fas fa-envelope-circle-check"></i>
+            Enhanced Email System
+        </div>
         <div class="user-info">
-            <span style="font-size: 20px; font-family: Arial, sans-serif;"> Welcome <%= user.fullName %></span>
-            <a href="/signout" class="sign-out-button">Sign Out</a>
+            <div class="user-avatar">
+                <%= user.fullName.charAt(0).toUpperCase() %>
+            </div>
+            <span>Welcome, <%= user.fullName %></span>
+            <a href="/signout" class="sign-out-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Sign Out
+            </a>
         </div>
     </div>
 
-    <div class="sidebar">
-        <a href="/compose" class="nav-link"><img src="https://listimg.pinclipart.com/picdir/s/116-1168371_the-icon-is-a-picture-of-a-logo.png" style="width:15px;"> Compose</a>
-        <a href="/inbox" class="nav-link"><img src="https://cdn-icons-png.flaticon.com/512/104/104703.png" style="width:15px;"> Inbox</a>
-        <a href="/outbox" class="nav-link active"><img src="https://cdn-icons-png.flaticon.com/512/104/104704.png" style="width: 15px;"> Outbox</a>
-    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="nav-section">
+                <div class="nav-title">Mail</div>
+                <a href="/compose" class="nav-link">
+                    <i class="fas fa-pen-to-square"></i>
+                    Compose
+                </a>
+                <a href="/inbox" class="nav-link">
+                    <i class="fas fa-inbox"></i>
+                    Inbox
+                </a>
+                <a href="/outbox" class="nav-link active">
+                    <i class="fas fa-paper-plane"></i>
+                    Sent
+                </a>
+                <a href="/drafts" class="nav-link">
+                    <i class="fas fa-file-lines"></i>
+                    Drafts
+                </a>
+            </div>
 
-    <div class="main-content">
-        <h1>Outbox Page</h1>
+            <div class="nav-section">
+                <div class="nav-title">Settings</div>
+                <a href="/settings" class="nav-link">
+                    <i class="fas fa-gear"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
 
-        <% if (emails.length === 0) { %>
-            <p>No sent emails.</p>
-        <% } else { %>
-            <div class="actions">
-                <div>
-                    <input type="checkbox" id="select-all" onclick="selectAll(this)">
-                    <label for="select-all">Select All</label>
-                    <button id="delete-btn" onclick="deleteSelected()">Delete Selected</button>
+        <div class="main-content">
+            <div class="content-header">
+                <div class="page-title">
+                    <i class="fas fa-paper-plane"></i>
+                    Sent Emails
                 </div>
             </div>
 
-            <div class="email-header">
-                <div>Recipient</div>
-                <div class="subject-header">Subject</div>
-                <div>Sent Time</div>
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-value"><%= total %></div>
+                    <div class="stat-label">Total Sent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value"><%= emails.filter(e => e.priority === 'high').length %></div>
+                    <div class="stat-label">High Priority</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value"><%= emails.filter(e => e.attachment).length %></div>
+                    <div class="stat-label">With Attachments</div>
+                </div>
             </div>
 
-            <form id="deleteForm">
-                <ul class="email-list">
+            <div class="toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search sent emails..." value="<%= search %>" 
+                           onchange="updateSearch(this.value)">
+                </div>
+                
+                <select class="sort-dropdown" onchange="updateSort(this.value)">
+                    <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest First</option>
+                    <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest First</option>
+                    <option value="recipient" <%= sort === 'recipient' ? 'selected' : '' %>>By Recipient</option>
+                    <option value="subject" <%= sort === 'subject' ? 'selected' : '' %>>By Subject</option>
+                </select>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-danger" onclick="deleteSelected()">
+                    <i class="fas fa-trash"></i>
+                    Delete Selected
+                </button>
+            </div>
+
+            <% if (emails.length === 0) { %>
+                <div class="empty-state">
+                    <i class="fas fa-paper-plane"></i>
+                    <h3>No sent emails found</h3>
+                    <p>You haven't sent any emails yet or no emails match your current search.</p>
+                </div>
+            <% } else { %>
+                <div class="email-list">
+                    <div class="email-header">
+                        <input type="checkbox" id="select-all" onchange="selectAll(this)">
+                        <div style="margin-left: 1rem; width: 250px;">Recipient</div>
+                        <div style="flex: 1;">Subject</div>
+                        <div style="width: 120px; text-align: right;">Sent Time</div>
+                    </div>
+
                     <% emails.forEach(email => { %>
-                        <li class="email-item">
-                            <input type="checkbox" name="emailIds" value="<%= email.id %>" class="checkbox" onclick="event.stopPropagation();">
-                            <div class="email-content">
-                                <div class="recipient">To: <%= email.recipientName %></div>
-                                <div class="subject" onclick="window.location.href='/email/<%= email.id %>'"><%= email.subject || '(no subject)' %></div>
-                                <div class="time"><%= new Date(email.createdAt).toLocaleString() %></div>
+                        <div class="email-item" onclick="openEmail('<%= email.id %>')">
+                            <input type="checkbox" name="emailIds" value="<%= email.id %>" 
+                                   onclick="event.stopPropagation()">
+                            
+                            <div class="recipient-info">
+                                <div class="recipient-avatar">
+                                    <%= email.recipientName.charAt(0).toUpperCase() %>
+                                </div>
+                                <div class="recipient-details">
+                                    <div class="recipient-name">To: <%= email.recipientName %></div>
+                                    <div class="recipient-label">Recipient</div>
+                                </div>
                             </div>
-                        </li>
+                            
+                            <div class="email-content">
+                                <div class="email-subject">
+                                    <% if (email.priority === 'high') { %>
+                                        <i class="fas fa-exclamation priority-icon priority-high" title="High Priority"></i>
+                                    <% } else if (email.priority === 'low') { %>
+                                        <i class="fas fa-arrow-down priority-icon priority-low" title="Low Priority"></i>
+                                    <% } %>
+                                    
+                                    <% if (email.attachment) { %>
+                                        <i class="fas fa-paperclip" title="Has Attachment"></i>
+                                    <% } %>
+                                    
+                                    <%= email.subject || '(no subject)' %>
+                                </div>
+                                <div class="email-preview">
+                                    <%= email.body ? email.body.substring(0, 100) + '...' : '' %>
+                                </div>
+                            </div>
+                            
+                            <div class="email-meta">
+                                <div class="email-time">
+                                    <%= new Date(email.createdAt).toLocaleDateString() %>
+                                </div>
+                                <div class="email-badges">
+                                    <span class="badge badge-sent">
+                                        <i class="fas fa-check"></i>
+                                        Sent
+                                    </span>
+                                    <% if (email.priority !== 'normal') { %>
+                                        <span class="badge badge-priority-<%= email.priority %>">
+                                            <%= email.priority %>
+                                        </span>
+                                    <% } %>
+                                    <% if (email.attachment) { %>
+                                        <span class="badge badge-attachment">
+                                            <i class="fas fa-paperclip"></i>
+                                        </span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
                     <% }); %>
-                </ul>
-            </form>
+                </div>
 
-            <div class="pagination">
-                <!-- Previous Page Button -->
-                <a href="/outbox?page=<%= Math.max(1, currentPage - 1) %>" class="<%= currentPage === 1 ? 'disabled' : '' %>"><<</a>
-                
-                <!-- Page Numbers -->
-                <% for(let i = 1; i <= totalPages; i++) { %>
-                    <a href="/outbox?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
-                <% } %>
-                
-                <!-- Next Page Button -->
-                <a href="/outbox?page=<%= Math.min(totalPages, currentPage + 1) %>" class="<%= currentPage === totalPages ? 'disabled' : '' %>">>></a>
-            </div>
-        <% } %>
+                <div class="pagination">
+                    <a href="?page=1&search=<%= search %>&sort=<%= sort %>" 
+                       class="<%= currentPage === 1 ? 'disabled' : '' %>">
+                        <i class="fas fa-angles-left"></i>
+                    </a>
+                    <a href="?page=<%= Math.max(1, currentPage - 1) %>&search=<%= search %>&sort=<%= sort %>" 
+                       class="<%= currentPage === 1 ? 'disabled' : '' %>">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                    
+                    <% for(let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                        <a href="?page=<%= i %>&search=<%= search %>&sort=<%= sort %>" 
+                           class="<%= currentPage === i ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                    
+                    <a href="?page=<%= Math.min(totalPages, currentPage + 1) %>&search=<%= search %>&sort=<%= sort %>" 
+                       class="<%= currentPage === totalPages ? 'disabled' : '' %>">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page=<%= totalPages %>&search=<%= search %>&sort=<%= sort %>" 
+                       class="<%= currentPage === totalPages ? 'disabled' : '' %>">
+                        <i class="fas fa-angles-right"></i>
+                    </a>
+                </div>
+            <% } %>
+        </div>
     </div>
 
     <script>
-        function selectAll(source) {
-            const checkboxes = document.querySelectorAll('input[name="emailIds"]');
-            checkboxes.forEach(cb => cb.checked = source.checked);
+        function selectAll(checkbox) {
+            const emailCheckboxes = document.querySelectorAll('input[name="emailIds"]');
+            emailCheckboxes.forEach(cb => cb.checked = checkbox.checked);
         }
-    
+
+        function openEmail(emailId) {
+            window.location.href = `/email/${emailId}`;
+        }
+
+        function getSelectedEmails() {
+            return Array.from(document.querySelectorAll('input[name="emailIds"]:checked'))
+                       .map(cb => cb.value);
+        }
+
         async function deleteSelected() {
-            const checkboxes = document.querySelectorAll('input[name="emailIds"]:checked');
-            const emailIds = Array.from(checkboxes).map(cb => cb.value);
-    
-            if (emailIds.length === 0) return;
-    
+            const emailIds = getSelectedEmails();
+            if (emailIds.length === 0) {
+                alert('Please select emails to delete');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete the selected emails?')) {
+                return;
+            }
+
             try {
-                if (confirm('Are you sure you want to delete the selected emails?')) {
-                    const response = await fetch('/api/emails/delete', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ emailIds })
-                    });
-    
-                    if (response.ok) {
-                        emailIds.forEach(id => {
-                            const emailItem = document.querySelector(`input[value="${id}"]`).closest('.email-item');
-                            emailItem.remove();
-                        });
-                        alert('Emails deleted successfully!');
-                    } else {
-                        alert('An error occurred while deleting the emails.');
-                    }
+                const response = await fetch('/api/emails/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ emailIds })
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error deleting emails');
                 }
             } catch (error) {
-                console.error('Error deleting emails:', error);
-                alert('An error occurred while deleting the emails.');
+                alert('Error deleting emails');
             }
+        }
+
+        function updateSearch(value) {
+            const url = new URL(window.location);
+            url.searchParams.set('search', value);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        }
+
+        function updateSort(value) {
+            const url = new URL(window.location);
+            url.searchParams.set('sort', value);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
         }
     </script>
 </body>

@@ -3,186 +3,803 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compose - Email System</title>
+    <title>Compose - Enhanced Email System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f5f7fa;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         .header {
-            background-color: #055ff2;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 60px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .header .logo {
+
+        .logo {
+            display: flex;
+            align-items: center;
             font-size: 1.5rem;
-            font-weight: bold;
-            text-transform: uppercase;
+            font-weight: 700;
+            color: #4a5568;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            color: #667eea;
+            font-size: 2rem;
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
+            gap: 1rem;
         }
-        .header .logo img {
+
+        .user-avatar {
+            width: 40px;
             height: 40px;
-            margin-right: 1rem;
-        }
-        .header .user-info {
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
-            gap: 1.5rem;
-        }
-        .sign-out-button {
-            padding: 0.5rem 1rem;
-            background-color: #f44336;
-            color: #fff;
-            border-radius: 4px;
-            text-decoration: none;
+            justify-content: center;
+            color: white;
             font-weight: bold;
-            transition: background-color 0.3s;
         }
-        .sign-out-button:hover {
-            background-color: #c62828;
+
+        .sign-out-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .sign-out-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
         }
 
         .sidebar {
-            width: 250px;
-            background-color: #fff;
-            height: calc(100vh - 60px);
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 2rem;
-            float: left;
-            overflow-y: auto;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
         }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
         .nav-link {
-            display: block;
+            display: flex;
+            align-items: center;
             padding: 0.75rem 1rem;
-            color: #333;
+            color: #4a5568;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 12px;
             margin-bottom: 0.5rem;
-            transition: background-color 0.3s, color 0.3s;
+            transition: all 0.3s ease;
         }
+
         .nav-link:hover {
-            background-color: #f5f5f5;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
         }
+
         .nav-link.active {
-            background-color: #e8f0fe;
-            color: #4285f4;
-            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
         }
 
         .main-content {
-            margin-left: 250px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 1rem;
+            border-radius: 20px;
             padding: 2rem;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            height: calc(100vh - 60px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
         }
 
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-title i {
+            margin-right: 0.5rem;
+            color: #667eea;
+        }
+
+        .compose-form {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
         .form-group {
-            margin-bottom: 20px;
+            flex: 1;
         }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        select, input[type="text"], textarea, input[type="file"] {
+
+        .form-group.full-width {
+            flex: none;
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
         }
-        textarea {
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control.textarea {
+            min-height: 200px;
             resize: vertical;
+            font-family: inherit;
         }
-        .error, .success {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+
+        .recipient-selector {
+            position: relative;
+        }
+
+        .recipient-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            min-height: 45px;
+            background: white;
+        }
+
+        .recipient-tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
-        .error {
-            background-color: #dc3545;
-        }
-        .success {
-            background-color: #28a745;
-        }
-        button[type="submit"] {
-            padding: 10px 20px;
-            background-color: #8d6e63;
-            color: white;
+
+        .recipient-tag button {
+            background: none;
             border: none;
-            border-radius: 4px;
+            color: white;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-size: 0.875rem;
         }
-        button[type="submit"]:hover {
-            background-color: #714d42;
+
+        .priority-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .priority-option {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .priority-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .priority-high.selected {
+            border-color: #e53e3e;
+            background: rgba(229, 62, 62, 0.1);
+            color: #e53e3e;
+        }
+
+        .priority-low.selected {
+            border-color: #38a169;
+            background: rgba(56, 161, 105, 0.1);
+            color: #38a169;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .file-upload-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            background: #f7fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4a5568;
+        }
+
+        .file-upload-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .file-preview {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .schedule-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .drafts-panel {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .drafts-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .draft-item {
+            padding: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .draft-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .draft-subject {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.875rem;
+        }
+
+        .draft-preview {
+            color: #718096;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem;
+            border: none;
+            background: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 1rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo"><img src="https://cdn-icons-png.flaticon.com/512/8743/8743964.png" alt="Logo" style="width: 30px;"> Email System</div>
+        <div class="logo">
+            <i class="fas fa-envelope-circle-check"></i>
+            Enhanced Email System
+        </div>
         <div class="user-info">
-            <span style="font-size: 20px;">Welcome <%= user.fullName %></span>
-            <a href="/signout" class="sign-out-button">Sign Out</a>
+            <div class="user-avatar">
+                <%= user.fullName.charAt(0).toUpperCase() %>
+            </div>
+            <span>Welcome, <%= user.fullName %></span>
+            <a href="/signout" class="sign-out-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Sign Out
+            </a>
         </div>
     </div>
-    
-    <div class="sidebar">
-        <a href="/compose" class="nav-link active"><img src="https://listimg.pinclipart.com/picdir/s/116-1168371_the-icon-is-a-picture-of-a-logo.png" style="width:15px;"> Compose</a>
-        <a href="/inbox" class="nav-link"><img src="https://cdn-icons-png.flaticon.com/512/104/104703.png" style="width:15px;"> Inbox</a>
-        <a href="/outbox" class="nav-link"><img src="https://cdn-icons-png.flaticon.com/512/104/104704.png" style="width: 15px;"> Outbox</a>
-    </div>
 
-    <div class="main-content">
-        <h1>Compose Email</h1>
+    <div class="container">
+        <div class="sidebar">
+            <div class="nav-section">
+                <div class="nav-title">Mail</div>
+                <a href="/compose" class="nav-link active">
+                    <i class="fas fa-pen-to-square"></i>
+                    Compose
+                </a>
+                <a href="/inbox" class="nav-link">
+                    <i class="fas fa-inbox"></i>
+                    Inbox
+                </a>
+                <a href="/outbox" class="nav-link">
+                    <i class="fas fa-paper-plane"></i>
+                    Sent
+                </a>
+                <a href="/drafts" class="nav-link">
+                    <i class="fas fa-file-lines"></i>
+                    Drafts
+                </a>
+            </div>
 
-        <% if (locals.error) { %>
-            <div class="error"><%= error %></div>
-        <% } %>
-        <% if (locals.success) { %>
-            <div class="success"><%= success %></div>
-        <% } %>
+            <div class="nav-section">
+                <div class="nav-title">Settings</div>
+                <a href="/settings" class="nav-link">
+                    <i class="fas fa-gear"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
 
-        <form action="/compose" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="recipient">To:</label>
-                <select id="recipient" name="recipient" required>
-                    <option value="">Select recipient</option>
-                    <% users.forEach(user => { %>
-                        <option value="<%= user.id %>"><%= user.fullName %> (<%= user.email %>)</option>
+        <div class="main-content">
+            <div class="content-header">
+                <div class="page-title">
+                    <i class="fas fa-pen-to-square"></i>
+                    Compose Email
+                </div>
+            </div>
+
+            <% if (locals.error) { %>
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <% if (locals.success) { %>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <% if (drafts && drafts.length > 0) { %>
+                <div class="drafts-panel">
+                    <div class="drafts-title">
+                        <i class="fas fa-file-lines"></i>
+                        Recent Drafts
+                    </div>
+                    <% drafts.forEach(draft => { %>
+                        <div class="draft-item" data-draft='<%- JSON.stringify(draft) %>' onclick="loadDraftFromData(this)">
+                            <div class="draft-subject">
+                                <%= draft.subject || '(no subject)' %>
+                            </div>
+                            <div class="draft-preview">
+                                <%= draft.body ? draft.body.substring(0, 50) + '...' : '' %>
+                            </div>
+                        </div>
                     <% }); %>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="subject">Subject:</label>
-                <input type="text" id="subject" name="subject" placeholder="Enter subject">
-            </div>
-            <div class="form-group">
-                <label for="body">Message:</label>
-                <textarea id="body" name="body" rows="10" placeholder="Enter your message..."></textarea>
-            </div>
-            <div class="form-group">
-                <label for="attachment">Attachment:</label>
-                <input type="file" id="attachment" name="attachment">
-            </div>
-            <button type="submit">Send</button>
-        </form>
+                </div>
+            <% } %>
+
+            <form class="compose-form" action="/compose" method="POST" enctype="multipart/form-data" id="composeForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="recipient">
+                            <i class="fas fa-user"></i>
+                            To
+                        </label>
+                        <select class="form-control" id="recipient" name="recipient" required>
+                            <option value="">Select recipient</option>
+                            <% users.forEach(user => { %>
+                                <option value="<%= user.id %>">
+                                    <%= user.fullName %> (<%= user.email %>)
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="priority">
+                            <i class="fas fa-flag"></i>
+                            Priority
+                        </label>
+                        <div class="priority-selector">
+                            <div class="priority-option priority-low" onclick="setPriority('low')">
+                                <i class="fas fa-arrow-down"></i>
+                                Low
+                            </div>
+                            <div class="priority-option selected" onclick="setPriority('normal')">
+                                <i class="fas fa-minus"></i>
+                                Normal
+                            </div>
+                            <div class="priority-option priority-high" onclick="setPriority('high')">
+                                <i class="fas fa-exclamation"></i>
+                                High
+                            </div>
+                        </div>
+                        <input type="hidden" id="priority" name="priority" value="normal">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="form-label" for="subject">
+                        <i class="fas fa-heading"></i>
+                        Subject
+                    </label>
+                    <input type="text" class="form-control" id="subject" name="subject" 
+                           placeholder="Enter email subject">
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="form-label" for="body">
+                        <i class="fas fa-message"></i>
+                        Message
+                    </label>
+                    <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" onclick="formatText('bold')" title="Bold">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="formatText('italic')" title="Italic">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="formatText('underline')" title="Underline">
+                            <i class="fas fa-underline"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertSignature()" title="Insert Signature">
+                            <i class="fas fa-signature"></i>
+                        </button>
+                    </div>
+                    <textarea class="form-control textarea" id="body" name="body" 
+                              placeholder="Type your message here..." rows="10"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-paperclip"></i>
+                            Attachment
+                        </label>
+                        <div class="file-upload">
+                            <input type="file" id="attachment" name="attachment" onchange="showFilePreview(this)">
+                            <label for="attachment" class="file-upload-btn">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                Choose File
+                            </label>
+                            <div class="file-preview" id="filePreview"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="scheduleDate">
+                            <i class="fas fa-clock"></i>
+                            Schedule (Optional)
+                        </label>
+                        <input type="datetime-local" class="form-control" id="scheduleDate" name="scheduleDate">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                        <i class="fas fa-save"></i>
+                        Save Draft
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                        <i class="fas fa-trash"></i>
+                        Clear
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Email
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <script>
+        let currentPriority = 'normal';
+
+        function setPriority(priority) {
+            currentPriority = priority;
+            document.getElementById('priority').value = priority;
+            
+            // Update UI
+            document.querySelectorAll('.priority-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelector(`.priority-${priority}`).classList.add('selected');
+        }
+
+        function showFilePreview(input) {
+            const preview = document.getElementById('filePreview');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                preview.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                        <span style="color: #718096; font-size: 0.75rem;">(${(file.size / 1024).toFixed(1)} KB)</span>
+                        <button type="button" onclick="clearFile()" style="background: none; border: none; color: #e53e3e; cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                preview.style.display = 'block';
+            }
+        }
+
+        function clearFile() {
+            document.getElementById('attachment').value = '';
+            document.getElementById('filePreview').style.display = 'none';
+        }
+
+        function formatText(command) {
+            document.execCommand(command, false, null);
+        }
+
+        function insertSignature() {
+            const textarea = document.getElementById('body');
+            const signature = '\n\nBest regards,\n<%= user.fullName %>';
+            textarea.value += signature;
+        }
+
+        function loadDraft(draft) {
+            if (draft.recipient) {
+                document.getElementById('recipient').value = draft.recipient;
+            }
+            if (draft.subject) {
+                document.getElementById('subject').value = draft.subject;
+            }
+            if (draft.body) {
+                document.getElementById('body').value = draft.body;
+            }
+        }
+
+        function loadDraftFromData(el) {
+            const draft = JSON.parse(el.dataset.draft);
+            loadDraft(draft);
+        }
+
+        async function saveDraft() {
+            const formData = {
+                recipient: document.getElementById('recipient').value,
+                subject: document.getElementById('subject').value,
+                body: document.getElementById('body').value
+            };
+
+            try {
+                const response = await fetch('/api/drafts/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-success';
+                    alert.innerHTML = '<i class="fas fa-check-circle"></i> Draft saved successfully!';
+                    document.querySelector('.main-content').insertBefore(alert, document.querySelector('.compose-form'));
+                    
+                    setTimeout(() => alert.remove(), 3000);
+                } else {
+                    alert('Error saving draft');
+                }
+            } catch (error) {
+                alert('Error saving draft');
+            }
+        }
+
+        function clearForm() {
+            if (confirm('Are you sure you want to clear the form?')) {
+                document.getElementById('composeForm').reset();
+                setPriority('normal');
+                clearFile();
+            }
+        }
+
+        // Auto-save draft every 30 seconds
+        setInterval(() => {
+            const subject = document.getElementById('subject').value;
+            const body = document.getElementById('body').value;
+            
+            if (subject || body) {
+                saveDraft();
+            }
+        }, 30000);
+    </script>
 </body>
 </html>
